@@ -39,9 +39,9 @@ public class ArticleListActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = ArticleListActivity.class.toString();
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
     // Use default locale format
-    private static final SimpleDateFormat outputFormat = new SimpleDateFormat();
+    private static final SimpleDateFormat OUTPUT_FORMAT = new SimpleDateFormat();
     // Most time functions can only handle 1902 - 2037
     private static final GregorianCalendar START_OF_EPOCH = new GregorianCalendar(2,1,1);
 
@@ -142,7 +142,7 @@ public class ArticleListActivity extends AppCompatActivity implements
         private Date parsePublishedDate() {
             try {
                 String date = mCursor.getString(ArticleLoader.Query.PUBLISHED_DATE);
-                return dateFormat.parse(date);
+                return DATE_FORMAT.parse(date);
             } catch (ParseException ex) {
                 Log.e(TAG, ex.getMessage());
                 Log.i(TAG, "passing today's date");
@@ -166,7 +166,7 @@ public class ArticleListActivity extends AppCompatActivity implements
                                 + mCursor.getString(ArticleLoader.Query.AUTHOR)));
             } else {
                 holder.subtitleView.setText(Html.fromHtml(
-                        outputFormat.format(publishedDate)
+                        OUTPUT_FORMAT.format(publishedDate)
                         + "<br/>" + " by "
                         + mCursor.getString(ArticleLoader.Query.AUTHOR)));
             }

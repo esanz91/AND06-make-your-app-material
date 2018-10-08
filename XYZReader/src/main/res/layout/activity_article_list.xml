@@ -14,14 +14,14 @@
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:contentScrim="?android:attr/colorPrimary"
+            app:contentScrim="?colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
 
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="112dp"
                 android:contentDescription="@string/app_name"
-                android:src="@color/colorPrimary"
+                android:src="?colorPrimary"
                 app:layout_collapseMode="parallax" />
 
             <android.support.v7.widget.Toolbar
