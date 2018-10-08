@@ -21,6 +21,8 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorPrimary">@color/gray800</item>
+        <item name="android:textColorSecondary">@color/gray700</item>
     </style>
 
     <style name="Theme.Bacon.Detail">
