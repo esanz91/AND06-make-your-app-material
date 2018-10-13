@@ -38,6 +38,7 @@ public class ArticleDetailActivity extends AppCompatActivity
     private int mTopInset;
     public int mMutedColor = 0xFF333333;
 
+    private String mPhotoUrl;
     private ViewPager mPager;
     private MyPagerAdapter mPagerAdapter;
     private AppBarLayout mAppBar;
@@ -108,11 +109,17 @@ public class ArticleDetailActivity extends AppCompatActivity
         String title = mCursor.getString(ArticleLoader.Query.TITLE);
         mCollapsingToolbar.setTitle(title);
 
-        String photoUrl = mCursor.getString(ArticleLoader.Query.PHOTO_URL);
-        mNetworkImageView.setImageUrl(photoUrl,
-                        ImageLoaderHelper.getInstance(getApplicationContext()).getImageLoader());
         BitmapDrawable bitmapDrawable = ((BitmapDrawable) mNetworkImageView.getDrawable());
-        if (bitmapDrawable != null) {
+
+        if (bitmapDrawable == null || !mCursor.getString(ArticleLoader.Query.PHOTO_URL).equalsIgnoreCase(mPhotoUrl)) {
+            mPhotoUrl = mCursor.getString(ArticleLoader.Query.PHOTO_URL);
+
+            mNetworkImageView.setImageUrl(mPhotoUrl,
+                    ImageLoaderHelper.getInstance(this).getImageLoader());
+            bitmapDrawable = ((BitmapDrawable) mNetworkImageView.getDrawable());
+        }
+
+        if (bitmapDrawable != null && bitmapDrawable.getBitmap() != null) {
             Palette p = Palette.generate(bitmapDrawable.getBitmap(), 12);
             mMutedColor = p.getDarkMutedColor(0xFF333333);
             mCollapsingToolbar.setContentScrimColor(mMutedColor);
@@ -144,6 +151,7 @@ public class ArticleDetailActivity extends AppCompatActivity
             }
             mStartId = 0;
         }
+        updateToolbar();
     }
 
     @Override
