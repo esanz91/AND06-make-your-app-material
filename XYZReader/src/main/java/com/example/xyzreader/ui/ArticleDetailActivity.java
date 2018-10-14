@@ -5,7 +5,9 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -20,8 +22,13 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.util.TypedValue;
+import android.widget.ImageView;
 
-import com.android.volley.toolbox.NetworkImageView;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.ItemsContract;
@@ -44,7 +51,7 @@ public class ArticleDetailActivity extends AppCompatActivity
     private AppBarLayout mAppBar;
     private CollapsingToolbarLayout mCollapsingToolbar;
     private FloatingActionButton mFloatingActionButton;
-    private NetworkImageView mNetworkImageView;
+    private ImageView mImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +69,7 @@ public class ArticleDetailActivity extends AppCompatActivity
         getSupportLoaderManager().initLoader(0, null, this);
 
         mCollapsingToolbar = findViewById(R.id.collapsing_toolbar);
-        mNetworkImageView = findViewById(R.id.backdrop);
+        mImageView = findViewById(R.id.backdrop);
         mFloatingActionButton = findViewById(R.id.share_fab);
         mFloatingActionButton.setOnClickListener(view ->
                 // TODO do something useful
@@ -109,20 +116,28 @@ public class ArticleDetailActivity extends AppCompatActivity
         String title = mCursor.getString(ArticleLoader.Query.TITLE);
         mCollapsingToolbar.setTitle(title);
 
-        BitmapDrawable bitmapDrawable = ((BitmapDrawable) mNetworkImageView.getDrawable());
+        BitmapDrawable bitmapDrawable = ((BitmapDrawable) mImageView.getDrawable());
 
         if (bitmapDrawable == null || !mCursor.getString(ArticleLoader.Query.PHOTO_URL).equalsIgnoreCase(mPhotoUrl)) {
             mPhotoUrl = mCursor.getString(ArticleLoader.Query.PHOTO_URL);
+            Glide.with(this)
+                    .load(mPhotoUrl)
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            return false;
+                        }
 
-            mNetworkImageView.setImageUrl(mPhotoUrl,
-                    ImageLoaderHelper.getInstance(this).getImageLoader());
-            bitmapDrawable = ((BitmapDrawable) mNetworkImageView.getDrawable());
-        }
-
-        if (bitmapDrawable != null && bitmapDrawable.getBitmap() != null) {
-            Palette p = Palette.generate(bitmapDrawable.getBitmap(), 12);
-            mMutedColor = p.getDarkMutedColor(0xFF333333);
-            mCollapsingToolbar.setContentScrimColor(mMutedColor);
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            BitmapDrawable bitmapDrawable = ((BitmapDrawable) resource);
+                            Palette p = Palette.from(bitmapDrawable.getBitmap()).generate();
+                            mMutedColor = p.getDarkMutedColor(0xFF333333);
+                            mCollapsingToolbar.setContentScrimColor(mMutedColor);
+                            return false;
+                        }
+                    })
+                    .into(mImageView);
         }
     }
 
@@ -151,7 +166,6 @@ public class ArticleDetailActivity extends AppCompatActivity
             }
             mStartId = 0;
         }
-        updateToolbar();
     }
 
     @Override

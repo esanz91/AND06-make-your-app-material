@@ -21,7 +21,7 @@
             app:contentScrim="?colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
 
-            <com.example.xyzreader.ui.DynamicHeightNetworkImageView
+            <ImageView
                 android:id="@+id/backdrop"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
